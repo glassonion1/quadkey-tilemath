@@ -11,7 +11,7 @@ $ yarn add quadkey-tilemath
 ```
 
 ## Usage
-```
+```ts
 import { TileMath } from 'quadkey-tilemath'
 
 const tile = TileMath.PositionToTileXY([139.69116, 35.63051], 20)
