@@ -193,9 +193,9 @@ class TileMath {
      */
     static QuadKeyToCentroidPosition(quadKey) {
         const tile = TileMath.QuadKeyToTileXY(quadKey);
-        const bbox = TileMath.TileXYToBoundingBox(tile.tileX, tile.tileY, tile.zoom);
-        const x = (bbox[0] + bbox[2]) * 0.5;
-        const y = (bbox[1] + bbox[3]) * 0.5;
+        const [west, south, east, north] = TileMath.TileXYToBoundingBox(tile.tileX, tile.tileY, tile.zoom);
+        const x = (west + east) * 0.5;
+        const y = (north + south) * 0.5;
         return [x, y];
     }
     /**
@@ -223,7 +223,7 @@ class TileMath {
      * @returns A string containing the quadkey.
      */
     static PositionToQuadKey(position, zoom) {
-        const tile = TileMath.PositionToTileXY([139.69116, 35.63051], zoom);
+        const tile = TileMath.PositionToTileXY(position, zoom);
         return TileMath.TileXYToQuadKey(tile.tileX, tile.tileY, zoom);
     }
     /**
