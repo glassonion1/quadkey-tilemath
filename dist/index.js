@@ -4,14 +4,14 @@ exports.TileMath = void 0;
 /** Tile System math for the Spherical Mercator projection coordinate system (EPSG:3857) */
 class TileMath {
     // Earth radius in meters.
-    static EarthRadius = 6378137;
-    static MinLatitude = -85.05112878;
-    static MaxLatitude = 85.05112878;
-    static MinLongitude = -180;
-    static MaxLongitude = 180;
+    static EARTH_RADIUS = 6378137;
+    static MIN_LATITUDE = -85.05112878;
+    static MAX_LATITUDE = 85.05112878;
+    static MIN_LONGITUDE = -180;
+    static MAX_LONGITUDE = 180;
     // One side size of the tile in the zoom level 0
     // @see https://learn.microsoft.com/en-us/bingmaps/articles/bing-maps-tile-system
-    static TileSize = 256;
+    static TILE_SIZE = 256;
     /**
      * Clips a number to the specified minimum and maximum values.
      * @param n The number to clip.
@@ -19,7 +19,7 @@ class TileMath {
      * @param maxValue Maximum allowable value.
      * @returns The clipped value.
      */
-    static Clip(n, minValue, maxValue) {
+    static clip(n, minValue, maxValue) {
         return Math.min(Math.max(n, minValue), maxValue);
     }
     /**
@@ -27,8 +27,8 @@ class TileMath {
      * @param zoom Zoom Level to calculate width at.
      * @returns Width and height of the map in pixels.
      */
-    static MapSize(zoom) {
-        return Math.ceil(this.TileSize * Math.pow(2, zoom));
+    static mapSize(zoom) {
+        return Math.ceil(this.TILE_SIZE * Math.pow(2, zoom));
     }
     /**
      * Calculates the Ground resolution at a specific degree of latitude in the meters per pixel.
@@ -36,10 +36,10 @@ class TileMath {
      * @param zoom Zoom level.
      * @returns Ground resolution in meters per pixels.
      */
-    static GroundResolution(latitude, zoom) {
-        latitude = this.Clip(latitude, this.MinLatitude, this.MaxLatitude);
-        return ((Math.cos((latitude * Math.PI) / 180) * 2 * Math.PI * this.EarthRadius) /
-            this.MapSize(zoom));
+    static groundResolution(latitude, zoom) {
+        latitude = this.clip(latitude, this.MIN_LATITUDE, this.MAX_LATITUDE);
+        return ((Math.cos((latitude * Math.PI) / 180) * 2 * Math.PI * this.EARTH_RADIUS) /
+            this.mapSize(zoom));
     }
     /**
      * Determines the map scale at a specified latitude, level of detail, and screen resolution.
@@ -48,8 +48,8 @@ class TileMath {
      * @param screenDpi Resolution of the screen, in dots per inch.
      * @returns The map scale, expressed as the denominator N of the ratio 1 : N.
      */
-    static MapScale(latitude, zoom, screenDpi) {
-        return (this.GroundResolution(latitude, zoom) * screenDpi) / 0.0254;
+    static mapScale(latitude, zoom, screenDpi) {
+        return (this.groundResolution(latitude, zoom) * screenDpi) / 0.0254;
     }
     /**
      * Global Converts a Pixel coordinate into a geospatial coordinate at a specified zoom level.
@@ -58,10 +58,10 @@ class TileMath {
      * @param zoom Zoom level.
      * @returns A position value in the format [longitude, latitude].
      */
-    static GlobalPixelToPosition(pixel, zoom) {
-        const mapSize = this.MapSize(zoom);
-        const x = this.Clip(pixel[0], 0, mapSize - 1) / mapSize - 0.5;
-        const y = 0.5 - this.Clip(pixel[1], 0, mapSize - 1) / mapSize;
+    static globalPixelToPosition(pixel, zoom) {
+        const mapSize = this.mapSize(zoom);
+        const x = this.clip(pixel[0], 0, mapSize - 1) / mapSize - 0.5;
+        const y = 0.5 - this.clip(pixel[1], 0, mapSize - 1) / mapSize;
         return [
             360 * x,
             90 - (360 * Math.atan(Math.exp(-y * 2 * Math.PI))) / Math.PI //Latitude
@@ -73,16 +73,16 @@ class TileMath {
      * @param zoom Zoom level.
      * @returns A pixel coordinate
      */
-    static PositionToGlobalPixel(position, zoom) {
-        const latitude = this.Clip(position[1], this.MinLatitude, this.MaxLatitude);
-        const longitude = this.Clip(position[0], this.MinLongitude, this.MaxLongitude);
+    static positionToGlobalPixel(position, zoom) {
+        const latitude = this.clip(position[1], this.MIN_LATITUDE, this.MAX_LATITUDE);
+        const longitude = this.clip(position[0], this.MIN_LONGITUDE, this.MAX_LONGITUDE);
         const x = (longitude + 180) / 360;
         const sinLatitude = Math.sin((latitude * Math.PI) / 180);
         const y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
-        const mapSize = this.MapSize(zoom);
+        const mapSize = this.mapSize(zoom);
         return [
-            this.Clip(x * mapSize + 0.5, 0, mapSize - 1),
-            this.Clip(y * mapSize + 0.5, 0, mapSize - 1)
+            this.clip(x * mapSize + 0.5, 0, mapSize - 1),
+            this.clip(y * mapSize + 0.5, 0, mapSize - 1)
         ];
     }
     /**
@@ -90,10 +90,10 @@ class TileMath {
      * @param pixel Pixel coordinates in the format of [x, y].
      * @returns Tile XY coordinates.
      */
-    static GlobalPixelToTileXY(pixel) {
+    static globalPixelToTileXY(pixel) {
         return {
-            tileX: Math.round(pixel[0] / this.TileSize),
-            tileY: Math.round(pixel[1] / this.TileSize)
+            tileX: Math.round(pixel[0] / this.TILE_SIZE),
+            tileY: Math.round(pixel[1] / this.TILE_SIZE)
         };
     }
     /**
@@ -102,7 +102,7 @@ class TileMath {
      * @param oldZoom The zoom level in which the input global pixel value is from.
      * @param newZoom The new zoom level in which the output global pixel value should be aligned with.
      */
-    static ScaleGlobalPixel(pixel, oldZoom, newZoom) {
+    static scaleGlobalPixel(pixel, oldZoom, newZoom) {
         const scale = Math.pow(2, oldZoom - newZoom);
         return [pixel[0] * scale, pixel[1] * scale];
     }
@@ -113,7 +113,7 @@ class TileMath {
     /// <param name="oldZoom">The zoom level in which the input global pixel values is from.</param>
     /// <param name="newZoom">The new zoom level in which the output global pixel values should be aligned with.</param>
     /// <returns>A set of global pixel values that has been scaled for the new zoom level.</returns>
-    static ScaleGlobalPixels(pixels, oldZoom, newZoom) {
+    static scaleGlobalPixels(pixels, oldZoom, newZoom) {
         const scale = Math.pow(2, oldZoom - newZoom);
         const output = [];
         for (let i = 0, len = pixels.length; i < len; i++) {
@@ -127,8 +127,8 @@ class TileMath {
      * @param tileY Tile Y coordinate.
      * @returns Pixel coordinates in the format of [x, y].
      */
-    static TileXYToGlobalPixel(tileX, tileY) {
-        return [tileX * this.TileSize, tileY * this.TileSize];
+    static tileXYToGlobalPixel(tileX, tileY) {
+        return [tileX * this.TILE_SIZE, tileY * this.TILE_SIZE];
     }
     /**
      * Converts tile XY coordinates into a quadkey at a specified level of detail.
@@ -137,7 +137,7 @@ class TileMath {
      * @param zoom Zoom level.
      * @returns A string containing the quadkey.
      */
-    static TileXYToQuadKey(tileX, tileY, zoom) {
+    static tileXYToQuadKey(tileX, tileY, zoom) {
         const quadKey = [];
         for (let i = zoom; i > 0; i--) {
             let digit = 0;
@@ -157,7 +157,7 @@ class TileMath {
      * @param quadKey Quadkey of the tile.
      * @returns Tile XY cocorindates and zoom level for the specified quadkey.
      */
-    static QuadKeyToTileXY(quadKey) {
+    static quadKeyToTileXY(quadKey) {
         let tileX = 0;
         let tileY = 0;
         const zoom = quadKey.length;
@@ -191,11 +191,11 @@ class TileMath {
      * @param quadKey Quadkey of the tile.
      * @returns A position value in the format [longitude, latitude].
      */
-    static QuadKeyToCentroidPosition(quadKey) {
-        const tile = TileMath.QuadKeyToTileXY(quadKey);
-        const [west, south, east, north] = TileMath.TileXYToBoundingBox(tile.tileX, tile.tileY, tile.zoom);
+    static quadKeyToCentroidPosition(quadKey) {
+        const tile = this.quadKeyToTileXY(quadKey);
+        const [west, south, east, north] = this.tileXYToBoundingBox(tile.tileX, tile.tileY, tile.zoom);
         const x = (west + east) * 0.5;
-        const y = (north + south) * 0.5;
+        const y = (south + north) * 0.5;
         return [x, y];
     }
     /**
@@ -204,16 +204,16 @@ class TileMath {
      * @param zoom Zoom level.
      * @returns Tiel XY coordinates.
      */
-    static PositionToTileXY(position, zoom) {
-        const latitude = this.Clip(position[1], this.MinLatitude, this.MaxLatitude);
-        const longitude = this.Clip(position[0], this.MinLongitude, this.MaxLongitude);
+    static positionToTileXY(position, zoom) {
+        const latitude = this.clip(position[1], this.MIN_LATITUDE, this.MAX_LATITUDE);
+        const longitude = this.clip(position[0], this.MIN_LONGITUDE, this.MAX_LONGITUDE);
         const x = (longitude + 180) / 360;
         const sinLatitude = Math.sin((latitude * Math.PI) / 180);
         const y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
-        const mapSize = this.MapSize(zoom);
+        const mapSize = this.mapSize(zoom);
         return {
-            tileX: Math.floor(this.Clip(x * mapSize + 0.5, 0, mapSize - 1) / this.TileSize),
-            tileY: Math.floor(this.Clip(y * mapSize + 0.5, 0, mapSize - 1) / this.TileSize)
+            tileX: Math.floor(this.clip(x * mapSize + 0.5, 0, mapSize - 1) / this.TILE_SIZE),
+            tileY: Math.floor(this.clip(y * mapSize + 0.5, 0, mapSize - 1) / this.TILE_SIZE)
         };
     }
     /**
@@ -222,9 +222,19 @@ class TileMath {
      * @param zoom Zoom level.
      * @returns A string containing the quadkey.
      */
-    static PositionToQuadKey(position, zoom) {
-        const tile = TileMath.PositionToTileXY(position, zoom);
-        return TileMath.TileXYToQuadKey(tile.tileX, tile.tileY, zoom);
+    static positionToQuadKey(position, zoom) {
+        const tile = this.positionToTileXY(position, zoom);
+        return this.tileXYToQuadKey(tile.tileX, tile.tileY, zoom);
+    }
+    /**
+     * Calculates the bounding box of a geospatial coordinate coordinates.
+     * @param position Position coordinate in the format [longitude, latitude].
+     * @param zoom Zoom level.
+     * @returns A bounding box of the tile defined as an array of numbers in the format of [west, south, east, north].
+     */
+    static positionToBoundingBox(position, zoom) {
+        const tile = this.positionToTileXY(position, zoom);
+        return this.tileXYToBoundingBox(tile.tileX, tile.tileY, zoom);
     }
     /**
      * Calculates the tile quadkey strings that are within a specified viewport.
@@ -234,17 +244,17 @@ class TileMath {
      * @param height The height of the map viewport in pixels.
      * @returns A list of quadkey strings that are within the specified viewport.
      */
-    static GetQuadkeysInView(position, zoom, width, height) {
-        const p = this.PositionToGlobalPixel(position, zoom);
+    static getQuadkeysInView(position, zoom, width, height) {
+        const p = this.positionToGlobalPixel(position, zoom);
         const top = p[1] - height * 0.5;
         const left = p[0] - width * 0.5;
         const bottom = p[1] + height * 0.5;
         const right = p[0] + width * 0.5;
-        const tl = this.GlobalPixelToPosition([left, top], zoom);
-        const br = this.GlobalPixelToPosition([right, bottom], zoom);
+        const tl = this.globalPixelToPosition([left, top], zoom);
+        const br = this.globalPixelToPosition([right, bottom], zoom);
         //Boudning box in the format: [west, south, east, north];
         const bounds = [tl[0], br[1], br[0], tl[1]];
-        return this.GetQuadkeysInBoundingBox(bounds, zoom);
+        return this.getQuadkeysInBoundingBox(bounds, zoom);
     }
     /**
      * Calculates the tile quadkey strings that are within a bounding box at a specific zoom level.
@@ -252,14 +262,14 @@ class TileMath {
      * @param zoom Zoom level to calculate tiles for.
      * @returns A list of quadkey strings.
      */
-    static GetQuadkeysInBoundingBox(bounds, zoom) {
+    static getQuadkeysInBoundingBox(bounds, zoom) {
         const keys = [];
         if (bounds != null && bounds.length >= 4) {
-            const tl = this.PositionToTileXY([bounds[0], bounds[3]], zoom);
-            const br = this.PositionToTileXY([bounds[2], bounds[1]], zoom);
+            const tl = this.positionToTileXY([bounds[0], bounds[3]], zoom);
+            const br = this.positionToTileXY([bounds[2], bounds[1]], zoom);
             for (let x = tl.tileX; x <= br.tileX; x++) {
                 for (let y = tl.tileY; y <= br.tileY; y++) {
-                    keys.push(this.TileXYToQuadKey(x, y, zoom));
+                    keys.push(this.tileXYToQuadKey(x, y, zoom));
                 }
             }
         }
@@ -272,16 +282,17 @@ class TileMath {
      * @param zoom Zoom level.
      * @returns A bounding box of the tile defined as an array of numbers in the format of [west, south, east, north].
      */
-    static TileXYToBoundingBox(tileX, tileY, zoom) {
+    static tileXYToBoundingBox(tileX, tileY, zoom) {
         //Top left corner pixel coordinates
-        const x1 = tileX * this.TileSize;
-        const y1 = tileY * this.TileSize;
+        const x0 = tileX * this.TILE_SIZE;
+        const y0 = tileY * this.TILE_SIZE;
         //Bottom right corner pixel coordinates
-        const x2 = x1 + this.TileSize;
-        const y2 = y1 + this.TileSize;
-        const wn = this.GlobalPixelToPosition([x1, y1], zoom);
-        const es = this.GlobalPixelToPosition([x2, y2], zoom);
-        return [wn[0], es[1], es[0], wn[1]];
+        const x1 = x0 + this.TILE_SIZE;
+        const y1 = y0 + this.TILE_SIZE;
+        const [west, north] = this.globalPixelToPosition([x0, y0], zoom);
+        const [east, south] = this.globalPixelToPosition([x1, y1], zoom);
+        // Tile coordinates are top left, map coordinates are bottom left
+        return [west, south, east, north];
     }
     /**
      * Calculates the best map view (center, zoom) for a bounding box on a map.
@@ -291,7 +302,7 @@ class TileMath {
      * @param padding Width in pixels to use to create a buffer around the map. This is to keep markers from being cut off on the edge.
      * @returns The center and zoom level to best position the map view over the provided bounding box.
      */
-    static BestMapView(bounds, mapWidth, mapHeight, padding) {
+    static bestMapView(bounds, mapWidth, mapHeight, padding) {
         if (bounds == null || bounds.length < 4) {
             return {
                 center: [0, 0],
@@ -319,9 +330,9 @@ class TileMath {
         const vy0 = Math.log(Math.tan(Math.PI * (0.25 + centerLat / 360)));
         const vy1 = Math.log(Math.tan(Math.PI * (0.25 + bounds[3] / 360)));
         const zoomFactorPowered = (mapHeight * 0.5 - padding) / (40.7436654315252 * (vy1 - vy0));
-        const resolutionVertical = 360.0 / (zoomFactorPowered * this.TileSize);
+        const resolutionVertical = 360.0 / (zoomFactorPowered * this.TILE_SIZE);
         const resolution = Math.max(resolutionHorizontal, resolutionVertical);
-        const zoom = Math.log2(360 / (resolution * this.TileSize));
+        const zoom = Math.log2(360 / (resolution * this.TILE_SIZE));
         return {
             center: [centerLon, centerLat],
             zoom: zoom

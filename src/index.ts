@@ -1,16 +1,16 @@
 /** Tile System math for the Spherical Mercator projection coordinate system (EPSG:3857) */
 export class TileMath {
   // Earth radius in meters.
-  private static EarthRadius = 6378137
+  private static readonly EARTH_RADIUS = 6378137
 
-  private static MinLatitude = -85.05112878
-  private static MaxLatitude = 85.05112878
-  private static MinLongitude = -180
-  private static MaxLongitude = 180
+  private static readonly MIN_LATITUDE = -85.05112878
+  private static readonly MAX_LATITUDE = 85.05112878
+  private static readonly MIN_LONGITUDE = -180
+  private static readonly MAX_LONGITUDE = 180
 
   // One side size of the tile in the zoom level 0
   // @see https://learn.microsoft.com/en-us/bingmaps/articles/bing-maps-tile-system
-  private static TileSize = 256
+  private static readonly TILE_SIZE = 256
 
   /**
    * Clips a number to the specified minimum and maximum values.
@@ -19,7 +19,7 @@ export class TileMath {
    * @param maxValue Maximum allowable value.
    * @returns The clipped value.
    */
-  private static Clip(n: number, minValue: number, maxValue: number): number {
+  private static clip(n: number, minValue: number, maxValue: number): number {
     return Math.min(Math.max(n, minValue), maxValue)
   }
 
@@ -28,8 +28,8 @@ export class TileMath {
    * @param zoom Zoom Level to calculate width at.
    * @returns Width and height of the map in pixels.
    */
-  public static MapSize(zoom: number): number {
-    return Math.ceil(this.TileSize * Math.pow(2, zoom))
+  public static mapSize(zoom: number): number {
+    return Math.ceil(this.TILE_SIZE * Math.pow(2, zoom))
   }
 
   /**
@@ -38,11 +38,11 @@ export class TileMath {
    * @param zoom Zoom level.
    * @returns Ground resolution in meters per pixels.
    */
-  public static GroundResolution(latitude: number, zoom: number): number {
-    latitude = this.Clip(latitude, this.MinLatitude, this.MaxLatitude)
+  public static groundResolution(latitude: number, zoom: number): number {
+    latitude = this.clip(latitude, this.MIN_LATITUDE, this.MAX_LATITUDE)
     return (
-      (Math.cos((latitude * Math.PI) / 180) * 2 * Math.PI * this.EarthRadius) /
-      this.MapSize(zoom)
+      (Math.cos((latitude * Math.PI) / 180) * 2 * Math.PI * this.EARTH_RADIUS) /
+      this.mapSize(zoom)
     )
   }
 
@@ -53,12 +53,12 @@ export class TileMath {
    * @param screenDpi Resolution of the screen, in dots per inch.
    * @returns The map scale, expressed as the denominator N of the ratio 1 : N.
    */
-  public static MapScale(
+  public static mapScale(
     latitude: number,
     zoom: number,
     screenDpi: number
   ): number {
-    return (this.GroundResolution(latitude, zoom) * screenDpi) / 0.0254
+    return (this.groundResolution(latitude, zoom) * screenDpi) / 0.0254
   }
 
   /**
@@ -68,11 +68,11 @@ export class TileMath {
    * @param zoom Zoom level.
    * @returns A position value in the format [longitude, latitude].
    */
-  public static GlobalPixelToPosition(pixel: number[], zoom: number): number[] {
-    const mapSize = this.MapSize(zoom)
+  public static globalPixelToPosition(pixel: number[], zoom: number): number[] {
+    const mapSize = this.mapSize(zoom)
 
-    const x = this.Clip(pixel[0], 0, mapSize - 1) / mapSize - 0.5
-    const y = 0.5 - this.Clip(pixel[1], 0, mapSize - 1) / mapSize
+    const x = this.clip(pixel[0], 0, mapSize - 1) / mapSize - 0.5
+    const y = 0.5 - this.clip(pixel[1], 0, mapSize - 1) / mapSize
 
     return [
       360 * x, //Longitude
@@ -86,15 +86,19 @@ export class TileMath {
    * @param zoom Zoom level.
    * @returns A pixel coordinate
    */
-  public static PositionToGlobalPixel(
+  public static positionToGlobalPixel(
     position: number[],
     zoom: number
   ): number[] {
-    const latitude = this.Clip(position[1], this.MinLatitude, this.MaxLatitude)
-    const longitude = this.Clip(
+    const latitude = this.clip(
+      position[1],
+      this.MIN_LATITUDE,
+      this.MAX_LATITUDE
+    )
+    const longitude = this.clip(
       position[0],
-      this.MinLongitude,
-      this.MaxLongitude
+      this.MIN_LONGITUDE,
+      this.MAX_LONGITUDE
     )
 
     const x = (longitude + 180) / 360
@@ -102,11 +106,11 @@ export class TileMath {
     const y =
       0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI)
 
-    const mapSize = this.MapSize(zoom)
+    const mapSize = this.mapSize(zoom)
 
     return [
-      this.Clip(x * mapSize + 0.5, 0, mapSize - 1),
-      this.Clip(y * mapSize + 0.5, 0, mapSize - 1)
+      this.clip(x * mapSize + 0.5, 0, mapSize - 1),
+      this.clip(y * mapSize + 0.5, 0, mapSize - 1)
     ]
   }
 
@@ -115,13 +119,13 @@ export class TileMath {
    * @param pixel Pixel coordinates in the format of [x, y].
    * @returns Tile XY coordinates.
    */
-  public static GlobalPixelToTileXY(pixel: number[]): {
+  public static globalPixelToTileXY(pixel: number[]): {
     tileX: number
     tileY: number
   } {
     return {
-      tileX: Math.round(pixel[0] / this.TileSize),
-      tileY: Math.round(pixel[1] / this.TileSize)
+      tileX: Math.round(pixel[0] / this.TILE_SIZE),
+      tileY: Math.round(pixel[1] / this.TILE_SIZE)
     }
   }
 
@@ -131,7 +135,7 @@ export class TileMath {
    * @param oldZoom The zoom level in which the input global pixel value is from.
    * @param newZoom The new zoom level in which the output global pixel value should be aligned with.
    */
-  public static ScaleGlobalPixel(
+  public static scaleGlobalPixel(
     pixel: number[],
     oldZoom: number,
     newZoom: number
@@ -148,7 +152,7 @@ export class TileMath {
   /// <param name="oldZoom">The zoom level in which the input global pixel values is from.</param>
   /// <param name="newZoom">The new zoom level in which the output global pixel values should be aligned with.</param>
   /// <returns>A set of global pixel values that has been scaled for the new zoom level.</returns>
-  public static ScaleGlobalPixels(
+  public static scaleGlobalPixels(
     pixels: number[][],
     oldZoom: number,
     newZoom: number
@@ -169,8 +173,8 @@ export class TileMath {
    * @param tileY Tile Y coordinate.
    * @returns Pixel coordinates in the format of [x, y].
    */
-  public static TileXYToGlobalPixel(tileX: number, tileY: number): number[] {
-    return [tileX * this.TileSize, tileY * this.TileSize]
+  public static tileXYToGlobalPixel(tileX: number, tileY: number): number[] {
+    return [tileX * this.TILE_SIZE, tileY * this.TILE_SIZE]
   }
 
   /**
@@ -180,7 +184,7 @@ export class TileMath {
    * @param zoom Zoom level.
    * @returns A string containing the quadkey.
    */
-  public static TileXYToQuadKey(
+  public static tileXYToQuadKey(
     tileX: number,
     tileY: number,
     zoom: number
@@ -208,7 +212,7 @@ export class TileMath {
    * @param quadKey Quadkey of the tile.
    * @returns Tile XY cocorindates and zoom level for the specified quadkey.
    */
-  public static QuadKeyToTileXY(quadKey: string): {
+  public static quadKeyToTileXY(quadKey: string): {
     tileX: number
     tileY: number
     zoom: number
@@ -253,15 +257,15 @@ export class TileMath {
    * @param quadKey Quadkey of the tile.
    * @returns A position value in the format [longitude, latitude].
    */
-  public static QuadKeyToCentroidPosition(quadKey: string): number[] {
-    const tile = TileMath.QuadKeyToTileXY(quadKey)
-    const [west, south, east, north] = TileMath.TileXYToBoundingBox(
+  public static quadKeyToCentroidPosition(quadKey: string): number[] {
+    const tile = this.quadKeyToTileXY(quadKey)
+    const [west, south, east, north] = this.tileXYToBoundingBox(
       tile.tileX,
       tile.tileY,
       tile.zoom
     )
     const x = (west + east) * 0.5
-    const y = (north + south) * 0.5
+    const y = (south + north) * 0.5
     return [x, y]
   }
 
@@ -271,15 +275,19 @@ export class TileMath {
    * @param zoom Zoom level.
    * @returns Tiel XY coordinates.
    */
-  public static PositionToTileXY(
+  public static positionToTileXY(
     position: number[],
     zoom: number
   ): { tileX: number; tileY: number } {
-    const latitude = this.Clip(position[1], this.MinLatitude, this.MaxLatitude)
-    const longitude = this.Clip(
+    const latitude = this.clip(
+      position[1],
+      this.MIN_LATITUDE,
+      this.MAX_LATITUDE
+    )
+    const longitude = this.clip(
       position[0],
-      this.MinLongitude,
-      this.MaxLongitude
+      this.MIN_LONGITUDE,
+      this.MAX_LONGITUDE
     )
 
     const x = (longitude + 180) / 360
@@ -287,14 +295,14 @@ export class TileMath {
     const y =
       0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI)
 
-    const mapSize = this.MapSize(zoom)
+    const mapSize = this.mapSize(zoom)
 
     return {
       tileX: Math.floor(
-        this.Clip(x * mapSize + 0.5, 0, mapSize - 1) / this.TileSize
+        this.clip(x * mapSize + 0.5, 0, mapSize - 1) / this.TILE_SIZE
       ),
       tileY: Math.floor(
-        this.Clip(y * mapSize + 0.5, 0, mapSize - 1) / this.TileSize
+        this.clip(y * mapSize + 0.5, 0, mapSize - 1) / this.TILE_SIZE
       )
     }
   }
@@ -305,10 +313,25 @@ export class TileMath {
    * @param zoom Zoom level.
    * @returns A string containing the quadkey.
    */
-  public static PositionToQuadKey(position: number[], zoom: number): string {
-    const tile = TileMath.PositionToTileXY(position, zoom)
+  public static positionToQuadKey(position: number[], zoom: number): string {
+    const tile = this.positionToTileXY(position, zoom)
 
-    return TileMath.TileXYToQuadKey(tile.tileX, tile.tileY, zoom)
+    return this.tileXYToQuadKey(tile.tileX, tile.tileY, zoom)
+  }
+
+  /**
+   * Calculates the bounding box of a geospatial coordinate coordinates.
+   * @param position Position coordinate in the format [longitude, latitude].
+   * @param zoom Zoom level.
+   * @returns A bounding box of the tile defined as an array of numbers in the format of [west, south, east, north].
+   */
+  public static positionToBoundingBox(
+    position: number[],
+    zoom: number
+  ): number[] {
+    const tile = this.positionToTileXY(position, zoom)
+
+    return this.tileXYToBoundingBox(tile.tileX, tile.tileY, zoom)
   }
 
   /**
@@ -319,13 +342,13 @@ export class TileMath {
    * @param height The height of the map viewport in pixels.
    * @returns A list of quadkey strings that are within the specified viewport.
    */
-  public static GetQuadkeysInView(
+  public static getQuadkeysInView(
     position: number[],
     zoom: number,
     width: number,
     height: number
   ): string[] {
-    const p = this.PositionToGlobalPixel(position, zoom)
+    const p = this.positionToGlobalPixel(position, zoom)
 
     const top = p[1] - height * 0.5
     const left = p[0] - width * 0.5
@@ -333,13 +356,13 @@ export class TileMath {
     const bottom = p[1] + height * 0.5
     const right = p[0] + width * 0.5
 
-    const tl = this.GlobalPixelToPosition([left, top], zoom)
-    const br = this.GlobalPixelToPosition([right, bottom], zoom)
+    const tl = this.globalPixelToPosition([left, top], zoom)
+    const br = this.globalPixelToPosition([right, bottom], zoom)
 
     //Boudning box in the format: [west, south, east, north];
     const bounds = [tl[0], br[1], br[0], tl[1]]
 
-    return this.GetQuadkeysInBoundingBox(bounds, zoom)
+    return this.getQuadkeysInBoundingBox(bounds, zoom)
   }
 
   /**
@@ -348,19 +371,19 @@ export class TileMath {
    * @param zoom Zoom level to calculate tiles for.
    * @returns A list of quadkey strings.
    */
-  public static GetQuadkeysInBoundingBox(
+  public static getQuadkeysInBoundingBox(
     bounds: number[],
     zoom: number
   ): string[] {
     const keys: string[] = []
 
     if (bounds != null && bounds.length >= 4) {
-      const tl = this.PositionToTileXY([bounds[0], bounds[3]], zoom)
-      const br = this.PositionToTileXY([bounds[2], bounds[1]], zoom)
+      const tl = this.positionToTileXY([bounds[0], bounds[3]], zoom)
+      const br = this.positionToTileXY([bounds[2], bounds[1]], zoom)
 
       for (let x = tl.tileX; x <= br.tileX; x++) {
         for (let y = tl.tileY; y <= br.tileY; y++) {
-          keys.push(this.TileXYToQuadKey(x, y, zoom))
+          keys.push(this.tileXYToQuadKey(x, y, zoom))
         }
       }
     }
@@ -375,23 +398,24 @@ export class TileMath {
    * @param zoom Zoom level.
    * @returns A bounding box of the tile defined as an array of numbers in the format of [west, south, east, north].
    */
-  public static TileXYToBoundingBox(
+  public static tileXYToBoundingBox(
     tileX: number,
     tileY: number,
     zoom: number
   ): number[] {
     //Top left corner pixel coordinates
-    const x1 = tileX * this.TileSize
-    const y1 = tileY * this.TileSize
+    const x0 = tileX * this.TILE_SIZE
+    const y0 = tileY * this.TILE_SIZE
 
     //Bottom right corner pixel coordinates
-    const x2 = x1 + this.TileSize
-    const y2 = y1 + this.TileSize
+    const x1 = x0 + this.TILE_SIZE
+    const y1 = y0 + this.TILE_SIZE
 
-    const wn = this.GlobalPixelToPosition([x1, y1], zoom)
-    const es = this.GlobalPixelToPosition([x2, y2], zoom)
+    const [west, north] = this.globalPixelToPosition([x0, y0], zoom)
+    const [east, south] = this.globalPixelToPosition([x1, y1], zoom)
 
-    return [wn[0], es[1], es[0], wn[1]]
+    // Tile coordinates are top left, map coordinates are bottom left
+    return [west, south, east, north]
   }
 
   /**
@@ -402,7 +426,7 @@ export class TileMath {
    * @param padding Width in pixels to use to create a buffer around the map. This is to keep markers from being cut off on the edge.
    * @returns The center and zoom level to best position the map view over the provided bounding box.
    */
-  public static BestMapView(
+  public static bestMapView(
     bounds: number[],
     mapWidth: number,
     mapHeight: number,
@@ -445,11 +469,11 @@ export class TileMath {
     const vy1 = Math.log(Math.tan(Math.PI * (0.25 + bounds[3] / 360)))
     const zoomFactorPowered =
       (mapHeight * 0.5 - padding) / (40.7436654315252 * (vy1 - vy0))
-    const resolutionVertical = 360.0 / (zoomFactorPowered * this.TileSize)
+    const resolutionVertical = 360.0 / (zoomFactorPowered * this.TILE_SIZE)
 
     const resolution = Math.max(resolutionHorizontal, resolutionVertical)
 
-    const zoom = Math.log2(360 / (resolution * this.TileSize))
+    const zoom = Math.log2(360 / (resolution * this.TILE_SIZE))
 
     return {
       center: [centerLon, centerLat],
