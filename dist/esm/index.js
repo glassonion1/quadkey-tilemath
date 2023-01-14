@@ -1,6 +1,6 @@
 /** Tile System math for the Spherical Mercator projection coordinate system (EPSG:3857) */
 export class TileMath {
-    //Earth radius in meters.
+    // Earth radius in meters.
     static EarthRadius = 6378137;
     static MinLatitude = -85.05112878;
     static MaxLatitude = 85.05112878;
@@ -56,12 +56,12 @@ export class TileMath {
      * @returns A position value in the format [longitude, latitude].
      */
     static GlobalPixelToPosition(pixel, zoom) {
-        var mapSize = this.MapSize(zoom);
-        var x = this.Clip(pixel[0], 0, mapSize - 1) / mapSize - 0.5;
-        var y = 0.5 - this.Clip(pixel[1], 0, mapSize - 1) / mapSize;
+        const mapSize = this.MapSize(zoom);
+        const x = this.Clip(pixel[0], 0, mapSize - 1) / mapSize - 0.5;
+        const y = 0.5 - this.Clip(pixel[1], 0, mapSize - 1) / mapSize;
         return [
             360 * x,
-            90 - (360 * Math.atan(Math.exp(-y * 2 * Math.PI))) / Math.PI, //Latitude
+            90 - (360 * Math.atan(Math.exp(-y * 2 * Math.PI))) / Math.PI //Latitude
         ];
     }
     /**
@@ -71,15 +71,15 @@ export class TileMath {
      * @returns A pixel coordinate
      */
     static PositionToGlobalPixel(position, zoom) {
-        var latitude = this.Clip(position[1], this.MinLatitude, this.MaxLatitude);
-        var longitude = this.Clip(position[0], this.MinLongitude, this.MaxLongitude);
-        var x = (longitude + 180) / 360;
-        var sinLatitude = Math.sin((latitude * Math.PI) / 180);
-        var y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
-        var mapSize = this.MapSize(zoom);
+        const latitude = this.Clip(position[1], this.MinLatitude, this.MaxLatitude);
+        const longitude = this.Clip(position[0], this.MinLongitude, this.MaxLongitude);
+        const x = (longitude + 180) / 360;
+        const sinLatitude = Math.sin((latitude * Math.PI) / 180);
+        const y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
+        const mapSize = this.MapSize(zoom);
         return [
             this.Clip(x * mapSize + 0.5, 0, mapSize - 1),
-            this.Clip(y * mapSize + 0.5, 0, mapSize - 1),
+            this.Clip(y * mapSize + 0.5, 0, mapSize - 1)
         ];
     }
     /**
@@ -90,7 +90,7 @@ export class TileMath {
     static GlobalPixelToTileXY(pixel) {
         return {
             tileX: Math.round(pixel[0] / this.TileSize),
-            tileY: Math.round(pixel[1] / this.TileSize),
+            tileY: Math.round(pixel[1] / this.TileSize)
         };
     }
     /**
@@ -100,7 +100,7 @@ export class TileMath {
      * @param newZoom The new zoom level in which the output global pixel value should be aligned with.
      */
     static ScaleGlobalPixel(pixel, oldZoom, newZoom) {
-        var scale = Math.pow(2, oldZoom - newZoom);
+        const scale = Math.pow(2, oldZoom - newZoom);
         return [pixel[0] * scale, pixel[1] * scale];
     }
     /// <summary>
@@ -111,9 +111,9 @@ export class TileMath {
     /// <param name="newZoom">The new zoom level in which the output global pixel values should be aligned with.</param>
     /// <returns>A set of global pixel values that has been scaled for the new zoom level.</returns>
     static ScaleGlobalPixels(pixels, oldZoom, newZoom) {
-        var scale = Math.pow(2, oldZoom - newZoom);
-        var output = [];
-        for (var i = 0, len = pixels.length; i < len; i++) {
+        const scale = Math.pow(2, oldZoom - newZoom);
+        const output = [];
+        for (let i = 0, len = pixels.length; i < len; i++) {
             output.push([pixels[i][0] * scale, pixels[i][1] * scale]);
         }
         return output;
@@ -135,10 +135,10 @@ export class TileMath {
      * @returns A string containing the quadkey.
      */
     static TileXYToQuadKey(tileX, tileY, zoom) {
-        var quadKey = [];
-        for (var i = zoom; i > 0; i--) {
-            var digit = 0;
-            var mask = 1 << (i - 1);
+        const quadKey = [];
+        for (let i = zoom; i > 0; i--) {
+            let digit = 0;
+            const mask = 1 << (i - 1);
             if ((tileX & mask) != 0) {
                 digit++;
             }
@@ -147,7 +147,7 @@ export class TileMath {
             }
             quadKey.push(digit);
         }
-        return quadKey.join("");
+        return quadKey.join('');
     }
     /**
      * Converts a quadkey into tile XY coordinates.
@@ -155,33 +155,45 @@ export class TileMath {
      * @returns Tile XY cocorindates and zoom level for the specified quadkey.
      */
     static QuadKeyToTileXY(quadKey) {
-        var tileX = 0;
-        var tileY = 0;
-        var zoom = quadKey.length;
-        for (var i = zoom; i > 0; i--) {
-            var mask = 1 << (i - 1);
+        let tileX = 0;
+        let tileY = 0;
+        const zoom = quadKey.length;
+        for (let i = zoom; i > 0; i--) {
+            const mask = 1 << (i - 1);
             switch (quadKey[zoom - i]) {
-                case "0":
+                case '0':
                     break;
-                case "1":
+                case '1':
                     tileX |= mask;
                     break;
-                case "2":
+                case '2':
                     tileY |= mask;
                     break;
-                case "3":
+                case '3':
                     tileX |= mask;
                     tileY |= mask;
                     break;
                 default:
-                    throw "Invalid QuadKey digit sequence.";
+                    throw 'Invalid QuadKey digit sequence.';
             }
         }
         return {
             tileX: tileX,
             tileY: tileY,
-            zoom: zoom,
+            zoom: zoom
         };
+    }
+    /**
+     * Converts a quadkey into a geospatial coordinate.
+     * @param quadKey Quadkey of the tile.
+     * @returns A position value in the format [longitude, latitude].
+     */
+    static QuadKeyToCentroidPosition(quadKey) {
+        const tile = TileMath.QuadKeyToTileXY(quadKey);
+        const bbox = TileMath.TileXYToBoundingBox(tile.tileX, tile.tileY, tile.zoom);
+        const x = (bbox[0] + bbox[2]) * 0.5;
+        const y = (bbox[1] + bbox[3]) * 0.5;
+        return [x, y];
     }
     /**
      * Calculates the XY tile coordinates that a coordinate falls into for a specific zoom level.
@@ -190,16 +202,26 @@ export class TileMath {
      * @returns Tiel XY coordinates.
      */
     static PositionToTileXY(position, zoom) {
-        var latitude = this.Clip(position[1], this.MinLatitude, this.MaxLatitude);
-        var longitude = this.Clip(position[0], this.MinLongitude, this.MaxLongitude);
-        var x = (longitude + 180) / 360;
-        var sinLatitude = Math.sin((latitude * Math.PI) / 180);
-        var y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
-        var mapSize = this.MapSize(zoom);
+        const latitude = this.Clip(position[1], this.MinLatitude, this.MaxLatitude);
+        const longitude = this.Clip(position[0], this.MinLongitude, this.MaxLongitude);
+        const x = (longitude + 180) / 360;
+        const sinLatitude = Math.sin((latitude * Math.PI) / 180);
+        const y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);
+        const mapSize = this.MapSize(zoom);
         return {
             tileX: Math.floor(this.Clip(x * mapSize + 0.5, 0, mapSize - 1) / this.TileSize),
-            tileY: Math.floor(this.Clip(y * mapSize + 0.5, 0, mapSize - 1) / this.TileSize),
+            tileY: Math.floor(this.Clip(y * mapSize + 0.5, 0, mapSize - 1) / this.TileSize)
         };
+    }
+    /**
+     * Converts a geospatial coordinate coordinates into a quadkey at a specified level of detail.
+     * @param position Position coordinate in the format [longitude, latitude].
+     * @param zoom Zoom level.
+     * @returns A string containing the quadkey.
+     */
+    static PositionToQuadKey(position, zoom) {
+        const tile = TileMath.PositionToTileXY([139.69116, 35.63051], zoom);
+        return TileMath.TileXYToQuadKey(tile.tileX, tile.tileY, zoom);
     }
     /**
      * Calculates the tile quadkey strings that are within a specified viewport.
@@ -210,15 +232,15 @@ export class TileMath {
      * @returns A list of quadkey strings that are within the specified viewport.
      */
     static GetQuadkeysInView(position, zoom, width, height) {
-        var p = this.PositionToGlobalPixel(position, zoom);
-        var top = p[1] - height * 0.5;
-        var left = p[0] - width * 0.5;
-        var bottom = p[1] + height * 0.5;
-        var right = p[0] + width * 0.5;
-        var tl = this.GlobalPixelToPosition([left, top], zoom);
-        var br = this.GlobalPixelToPosition([right, bottom], zoom);
+        const p = this.PositionToGlobalPixel(position, zoom);
+        const top = p[1] - height * 0.5;
+        const left = p[0] - width * 0.5;
+        const bottom = p[1] + height * 0.5;
+        const right = p[0] + width * 0.5;
+        const tl = this.GlobalPixelToPosition([left, top], zoom);
+        const br = this.GlobalPixelToPosition([right, bottom], zoom);
         //Boudning box in the format: [west, south, east, north];
-        var bounds = [tl[0], br[1], br[0], tl[1]];
+        const bounds = [tl[0], br[1], br[0], tl[1]];
         return this.GetQuadkeysInBoundingBox(bounds, zoom);
     }
     /**
@@ -228,12 +250,12 @@ export class TileMath {
      * @returns A list of quadkey strings.
      */
     static GetQuadkeysInBoundingBox(bounds, zoom) {
-        var keys = [];
+        const keys = [];
         if (bounds != null && bounds.length >= 4) {
-            var tl = this.PositionToTileXY([bounds[0], bounds[3]], zoom);
-            var br = this.PositionToTileXY([bounds[2], bounds[1]], zoom);
-            for (var x = tl.tileX; x <= br.tileX; x++) {
-                for (var y = tl.tileY; y <= br.tileY; y++) {
+            const tl = this.PositionToTileXY([bounds[0], bounds[3]], zoom);
+            const br = this.PositionToTileXY([bounds[2], bounds[1]], zoom);
+            for (let x = tl.tileX; x <= br.tileX; x++) {
+                for (let y = tl.tileY; y <= br.tileY; y++) {
                     keys.push(this.TileXYToQuadKey(x, y, zoom));
                 }
             }
@@ -249,13 +271,13 @@ export class TileMath {
      */
     static TileXYToBoundingBox(tileX, tileY, zoom) {
         //Top left corner pixel coordinates
-        var x1 = tileX * this.TileSize;
-        var y1 = tileY * this.TileSize;
+        const x1 = tileX * this.TileSize;
+        const y1 = tileY * this.TileSize;
         //Bottom right corner pixel coordinates
-        var x2 = x1 + this.TileSize;
-        var y2 = y1 + this.TileSize;
-        var wn = this.GlobalPixelToPosition([x1, y1], zoom);
-        var es = this.GlobalPixelToPosition([x2, y2], zoom);
+        const x2 = x1 + this.TileSize;
+        const y2 = y1 + this.TileSize;
+        const wn = this.GlobalPixelToPosition([x1, y1], zoom);
+        const es = this.GlobalPixelToPosition([x2, y2], zoom);
         return [wn[0], es[1], es[0], wn[1]];
     }
     /**
@@ -270,12 +292,11 @@ export class TileMath {
         if (bounds == null || bounds.length < 4) {
             return {
                 center: [0, 0],
-                zoom: 1,
+                zoom: 1
             };
         }
-        var boundsDeltaX;
-        var centerLat;
-        var centerLon;
+        let boundsDeltaX;
+        let centerLon;
         //Check if east value is greater than west value which would indicate that bounding box crosses the antimeridian.
         if (bounds[2] > bounds[0]) {
             boundsDeltaX = bounds[2] - bounds[0];
@@ -285,22 +306,22 @@ export class TileMath {
             boundsDeltaX = 360 - (bounds[0] - bounds[2]);
             centerLon = (((bounds[2] + bounds[0]) / 2 + 360) % 360) - 180;
         }
-        var ry1 = Math.log((Math.sin((bounds[1] * Math.PI) / 180) + 1) /
+        const ry1 = Math.log((Math.sin((bounds[1] * Math.PI) / 180) + 1) /
             Math.cos((bounds[1] * Math.PI) / 180));
-        var ry2 = Math.log((Math.sin((bounds[3] * Math.PI) / 180) + 1) /
+        const ry2 = Math.log((Math.sin((bounds[3] * Math.PI) / 180) + 1) /
             Math.cos((bounds[3] * Math.PI) / 180));
-        var ryc = (ry1 + ry2) / 2;
-        centerLat = (Math.atan(Math.sinh(ryc)) * 180) / Math.PI;
-        var resolutionHorizontal = boundsDeltaX / (mapWidth - padding * 2);
-        var vy0 = Math.log(Math.tan(Math.PI * (0.25 + centerLat / 360)));
-        var vy1 = Math.log(Math.tan(Math.PI * (0.25 + bounds[3] / 360)));
-        var zoomFactorPowered = (mapHeight * 0.5 - padding) / (40.7436654315252 * (vy1 - vy0));
-        var resolutionVertical = 360.0 / (zoomFactorPowered * this.TileSize);
-        var resolution = Math.max(resolutionHorizontal, resolutionVertical);
-        var zoom = Math.log2(360 / (resolution * this.TileSize));
+        const ryc = (ry1 + ry2) / 2;
+        const centerLat = (Math.atan(Math.sinh(ryc)) * 180) / Math.PI;
+        const resolutionHorizontal = boundsDeltaX / (mapWidth - padding * 2);
+        const vy0 = Math.log(Math.tan(Math.PI * (0.25 + centerLat / 360)));
+        const vy1 = Math.log(Math.tan(Math.PI * (0.25 + bounds[3] / 360)));
+        const zoomFactorPowered = (mapHeight * 0.5 - padding) / (40.7436654315252 * (vy1 - vy0));
+        const resolutionVertical = 360.0 / (zoomFactorPowered * this.TileSize);
+        const resolution = Math.max(resolutionHorizontal, resolutionVertical);
+        const zoom = Math.log2(360 / (resolution * this.TileSize));
         return {
             center: [centerLon, centerLat],
-            zoom: zoom,
+            zoom: zoom
         };
     }
 }

@@ -32,6 +32,9 @@ describe('run tests the TileMath class', () => {
     expect(TileMath.TileXYToQuadKey(tile.tileX, tile.tileY, 15)).toBe(
       '133002112303213'
     )
+    expect(TileMath.PositionToQuadKey([139.69116, 35.63051], 15)).toBe(
+      '133002112303213'
+    )
   })
   it('QuadKeyToCentroidPosition', () => {
     const lnglat = TileMath.QuadKeyToCentroidPosition('13300211230301333312')

@@ -255,9 +255,13 @@ export class TileMath {
    */
   public static QuadKeyToCentroidPosition(quadKey: string): number[] {
     const tile = TileMath.QuadKeyToTileXY(quadKey)
-    const bbox = TileMath.TileXYToBoundingBox(tile.tileX, tile.tileY, tile.zoom)
-    const x = (bbox[0] + bbox[2]) * 0.5
-    const y = (bbox[1] + bbox[3]) * 0.5
+    const [west, south, east, north] = TileMath.TileXYToBoundingBox(
+      tile.tileX,
+      tile.tileY,
+      tile.zoom
+    )
+    const x = (west + east) * 0.5
+    const y = (north + south) * 0.5
     return [x, y]
   }
 
@@ -301,8 +305,8 @@ export class TileMath {
    * @param zoom Zoom level.
    * @returns A string containing the quadkey.
    */
-  public static PositionToQuadkey(position: number[], zoom: number): string {
-    const tile = TileMath.PositionToTileXY([139.69116, 35.63051], zoom)
+  public static PositionToQuadKey(position: number[], zoom: number): string {
+    const tile = TileMath.PositionToTileXY(position, zoom)
 
     return TileMath.TileXYToQuadKey(tile.tileX, tile.tileY, zoom)
   }

@@ -93,6 +93,12 @@ export declare class TileMath {
         zoom: number;
     };
     /**
+     * Converts a quadkey into a geospatial coordinate.
+     * @param quadKey Quadkey of the tile.
+     * @returns A position value in the format [longitude, latitude].
+     */
+    static QuadKeyToCentroidPosition(quadKey: string): number[];
+    /**
      * Calculates the XY tile coordinates that a coordinate falls into for a specific zoom level.
      * @param position Position coordinate in the format [longitude, latitude].
      * @param zoom Zoom level.
@@ -102,6 +108,13 @@ export declare class TileMath {
         tileX: number;
         tileY: number;
     };
+    /**
+     * Converts a geospatial coordinate coordinates into a quadkey at a specified level of detail.
+     * @param position Position coordinate in the format [longitude, latitude].
+     * @param zoom Zoom level.
+     * @returns A string containing the quadkey.
+     */
+    static PositionToQuadKey(position: number[], zoom: number): string;
     /**
      * Calculates the tile quadkey strings that are within a specified viewport.
      * @param position Position coordinate in the format [longitude, latitude].
