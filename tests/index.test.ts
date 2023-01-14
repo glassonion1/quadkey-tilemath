@@ -33,4 +33,8 @@ describe('run tests the TileMath class', () => {
       '133002112303213'
     )
   })
+  it('QuadKeyToCentroidPosition', () => {
+    const lnglat = TileMath.QuadKeyToCentroidPosition('13300211230301333312')
+    console.log(lnglat)
+  })
 })

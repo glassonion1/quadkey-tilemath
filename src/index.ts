@@ -249,6 +249,19 @@ export class TileMath {
   }
 
   /**
+   * Converts a quadkey into a geospatial coordinate.
+   * @param quadKey Quadkey of the tile.
+   * @returns A position value in the format [longitude, latitude].
+   */
+  public static QuadKeyToCentroidPosition(quadKey: string): number[] {
+    const tile = TileMath.QuadKeyToTileXY(quadKey)
+    const bbox = TileMath.TileXYToBoundingBox(tile.tileX, tile.tileY, tile.zoom)
+    const x = (bbox[0] + bbox[2]) * 0.5
+    const y = (bbox[1] + bbox[3]) * 0.5
+    return [x, y]
+  }
+
+  /**
    * Calculates the XY tile coordinates that a coordinate falls into for a specific zoom level.
    * @param position Position coordinate in the format [longitude, latitude].
    * @param zoom Zoom level.
@@ -280,6 +293,18 @@ export class TileMath {
         this.Clip(y * mapSize + 0.5, 0, mapSize - 1) / this.TileSize
       )
     }
+  }
+
+  /**
+   * Converts a geospatial coordinate coordinates into a quadkey at a specified level of detail.
+   * @param position Position coordinate in the format [longitude, latitude].
+   * @param zoom Zoom level.
+   * @returns A string containing the quadkey.
+   */
+  public static PositionToQuadkey(position: number[], zoom: number): string {
+    const tile = TileMath.PositionToTileXY([139.69116, 35.63051], zoom)
+
+    return TileMath.TileXYToQuadKey(tile.tileX, tile.tileY, zoom)
   }
 
   /**
