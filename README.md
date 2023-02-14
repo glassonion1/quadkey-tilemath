@@ -20,10 +20,10 @@ $ yarn add quadkey-tilemath
 ## Usage
 Converts a longitude, latitude to a quadkey.
 ```ts
-import { TileMath } from 'quadkey-tilemath'
+import tileMath from 'quadkey-tilemath'
 
 // Shibuya
-const quadkey = TileMath.positionToQuadKey([139.69116, 35.63051], 20)
+const quadkey = tileMath.positionToQuadKey([139.69116, 35.63051], 20)
 
 // 133002112303213
 console.log(quadkey)
