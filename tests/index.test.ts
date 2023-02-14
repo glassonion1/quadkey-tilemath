@@ -29,13 +29,36 @@ describe('run tests the TileMath class', () => {
     expect(TileMath.mapSize(23)).toBe(2147483648)
   })
   it('positionToQuadKey', () => {
-    const tile = TileMath.positionToTileXY([139.69116, 35.63051], 15)
+    const p = [139.69116, 35.63051]
+    const tile = TileMath.positionToTileXY(p, 15)
     expect(TileMath.tileXYToQuadKey(tile.tileX, tile.tileY, 15)).toBe(
       '133002112303213'
     )
-    expect(TileMath.positionToQuadKey([139.69116, 35.63051], 15)).toBe(
-      '133002112303213'
-    )
+    expect(TileMath.positionToQuadKey(p, 15)).toBe('133002112303213')
+    expect(TileMath.positionToQuadKey(p, 0)).toBe('')
+    expect(TileMath.positionToQuadKey(p, 1)).toBe('1')
+    expect(TileMath.positionToQuadKey(p, 2)).toBe('13')
+    expect(TileMath.positionToQuadKey(p, 3)).toBe('133')
+    expect(TileMath.positionToQuadKey(p, 4)).toBe('1330')
+    expect(TileMath.positionToQuadKey(p, 5)).toBe('13300')
+    expect(TileMath.positionToQuadKey(p, 6)).toBe('133002')
+    expect(TileMath.positionToQuadKey(p, 7)).toBe('1330021')
+    expect(TileMath.positionToQuadKey(p, 8)).toBe('13300211')
+    expect(TileMath.positionToQuadKey(p, 9)).toBe('133002112')
+    expect(TileMath.positionToQuadKey(p, 10)).toBe('1330021123')
+    expect(TileMath.positionToQuadKey(p, 11)).toBe('13300211230')
+    expect(TileMath.positionToQuadKey(p, 12)).toBe('133002112303')
+    expect(TileMath.positionToQuadKey(p, 13)).toBe('1330021123032')
+    expect(TileMath.positionToQuadKey(p, 14)).toBe('13300211230321')
+    expect(TileMath.positionToQuadKey(p, 15)).toBe('133002112303213')
+    expect(TileMath.positionToQuadKey(p, 16)).toBe('1330021123032130')
+    expect(TileMath.positionToQuadKey(p, 17)).toBe('13300211230321300')
+    expect(TileMath.positionToQuadKey(p, 18)).toBe('133002112303213000')
+    expect(TileMath.positionToQuadKey(p, 19)).toBe('1330021123032121111')
+    expect(TileMath.positionToQuadKey(p, 20)).toBe('13300211230321211111')
+    expect(TileMath.positionToQuadKey(p, 21)).toBe('133002112303212111111')
+    expect(TileMath.positionToQuadKey(p, 22)).toBe('1330021123032121111111')
+    expect(TileMath.positionToQuadKey(p, 23)).toBe('13300211230321211111111')
   })
   it('positionToBoundingBox', () => {
     const t = TileMath.positionToBoundingBox([139.69116, 35.63051], 15)
