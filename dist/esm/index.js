@@ -1,9 +1,11 @@
-export { pointToQuadKey, quadkeyToPoint, quadKeyToCentroidPoint, pointToBoundingBox } from './quadkey';
-import { pointToQuadKey, quadkeyToPoint, quadKeyToCentroidPoint, pointToBoundingBox } from './quadkey';
+import { quadkeyToPoint, quadkeyToCentroidPoint } from './quadkey';
+import { pointToQuadkey, pointToBoundingBox } from './point';
+import { getQuadkeysInBoundingBox } from './bbox';
 const tileMath = {
-    pointToQuadKey: pointToQuadKey,
+    pointToQuadkey: pointToQuadkey,
+    pointToBoundingBox: pointToBoundingBox,
     quadkeyToPoint: quadkeyToPoint,
-    quadKeyToCentroidPoint: quadKeyToCentroidPoint,
-    pointToBoundingBox: pointToBoundingBox
+    quadkeyToCentroidPoint: quadkeyToCentroidPoint,
+    getQuadkeysInBoundingBox: getQuadkeysInBoundingBox
 };
 export default tileMath;

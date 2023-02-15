@@ -46,11 +46,18 @@ export const quadkeyToTile = (quadkey: string): Tile => {
  * @param quadkey Quadkey of the tile.
  * @returns A point value(west, south).
  */
-export const quadkeyToPoint = (quadkey: string): Point => {
+export const quadkeyToPoint = (
+  quadkey: string,
+  anchorX: number = 0.0,
+  anchorY: number = 0.0
+): Point => {
   const tile = quadkeyToTile(quadkey)
   const bbox = tileToBoundingBox(tile.tileX, tile.tileY, quadkey.length)
 
-  return { lng: bbox.west, lat: bbox.south }
+  const w = bbox.east - bbox.west
+  const h = bbox.north - bbox.south
+
+  return { lng: bbox.west + w * anchorX, lat: bbox.south + h * anchorY }
 }
 
 /**

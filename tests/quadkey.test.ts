@@ -82,7 +82,7 @@ describe('run tests', () => {
     expect(pointToQuadkey(p5[0], p5[1], 23)).toBe('12222222222122122211212')
   })
 
-  it('tests the positionToBoundingBox', () => {
+  it('tests the pointToBoundingBox', () => {
     expect(pointToBoundingBox(139.69116, 35.63051, 15)).toStrictEqual({
       west: 139.68017578125,
       south: 35.62158189955967,
@@ -91,8 +91,15 @@ describe('run tests', () => {
     })
   })
 
-  it('tests the quadkeyToCentroidPosition', () => {
+  it('tests the quadkeyToCentroidPoint', () => {
     expect(quadkeyToCentroidPoint('13300211230301333312')).toStrictEqual({
+      lng: 139.70163345336914,
+      lat: 35.65799363491759
+    })
+  })
+
+  it('tests the quadkeyToCentroidPoint', () => {
+    expect(quadkeyToPoint('13300211230301333312', 0.5, 0.5)).toStrictEqual({
       lng: 139.70163345336914,
       lat: 35.65799363491759
     })
