@@ -35,22 +35,14 @@ export const quadkeyToTile = (quadkey) => {
 /**
  * Converts a quadkey into a geospatial coordinate.
  * @param quadkey Quadkey of the tile.
+ * @param anchorX - anchor point of longitude
+ * @param anchorY - anchor point of latitude
  * @returns A point value(west, south).
  */
-export const quadkeyToPoint = (quadkey) => {
+export const quadkeyToPoint = (quadkey, anchorX = 0.0, anchorY = 0.0) => {
     const tile = quadkeyToTile(quadkey);
     const bbox = tileToBoundingBox(tile.tileX, tile.tileY, quadkey.length);
-    return { lng: bbox.west, lat: bbox.south };
-};
-/**
- * Converts a quadkey into a geospatial coordinate.
- * @param quadkey Quadkey of the tile.
- * @returns A point value.
- */
-export const quadkeyToCentroidPoint = (quadkey) => {
-    const tile = quadkeyToTile(quadkey);
-    const bbox = tileToBoundingBox(tile.tileX, tile.tileY, quadkey.length);
-    const x = (bbox.west + bbox.east) * 0.5;
-    const y = (bbox.south + bbox.north) * 0.5;
-    return { lng: x, lat: y };
+    const w = bbox.east - bbox.west;
+    const h = bbox.north - bbox.south;
+    return { lng: bbox.west + w * anchorX, lat: bbox.south + h * anchorY };
 };

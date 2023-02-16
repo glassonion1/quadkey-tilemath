@@ -7,7 +7,6 @@ const tileMath = {
     pointToQuadkey: point_1.pointToQuadkey,
     pointToBoundingBox: point_1.pointToBoundingBox,
     quadkeyToPoint: quadkey_1.quadkeyToPoint,
-    quadkeyToCentroidPoint: quadkey_1.quadkeyToCentroidPoint,
     getQuadkeysInBoundingBox: bbox_1.getQuadkeysInBoundingBox
 };
 exports.default = tileMath;
