@@ -23,8 +23,17 @@ Converts a longitude, latitude to a quadkey.
 import tileMath from 'quadkey-tilemath'
 
 // Shibuya
-const quadkey = tileMath.positionToQuadkey([139.69116, 35.63051], 20)
+const quadkey = tileMath.pointToQuadkey([139.69116, 35.63051], 20)
 
 // 133002112303213
 console.log(quadkey)
+```
+Converts a quadkey to lng lat point.
+```ts
+import tileMath from 'quadkey-tilemath'
+
+const point = tileMath.quadkeyToPoint('13300211230301333312')
+
+// 139.7014617919922, 35.657854158137965
+console.log(point)
 ```

@@ -1,9 +1,5 @@
 import { pointToBoundingBox, pointToQuadkey, pointToTile } from '../src/point'
-import {
-  quadkeyToCentroidPoint,
-  quadkeyToPoint,
-  quadkeyToTile
-} from '../src/quadkey'
+import { quadkeyToPoint, quadkeyToTile } from '../src/quadkey'
 
 // https://jenningsanderson.com/geo/#8.9/35.6238/-220.2713
 describe('run tests', () => {
@@ -91,14 +87,7 @@ describe('run tests', () => {
     })
   })
 
-  it('tests the quadkeyToCentroidPoint', () => {
-    expect(quadkeyToCentroidPoint('13300211230301333312')).toStrictEqual({
-      lng: 139.70163345336914,
-      lat: 35.65799363491759
-    })
-  })
-
-  it('tests the quadkeyToCentroidPoint', () => {
+  it('tests the quadkeyToPoint centroid', () => {
     expect(quadkeyToPoint('13300211230301333312', 0.5, 0.5)).toStrictEqual({
       lng: 139.70163345336914,
       lat: 35.65799363491759
@@ -109,6 +98,20 @@ describe('run tests', () => {
     expect(quadkeyToPoint('13300211230301333312')).toStrictEqual({
       lng: 139.7014617919922,
       lat: 35.657854158137965
+    })
+  })
+
+  it('tests the quadkeyToPoint', () => {
+    expect(quadkeyToPoint('12222222222122122211212')).toStrictEqual({
+      lng: 0.09999275207519531,
+      lat: 0.09999270131670242
+    })
+  })
+
+  it('tests the quadkeyToPoint', () => {
+    expect(quadkeyToPoint('21111111111211211122121')).toStrictEqual({
+      lng: -0.1000356674194336,
+      lat: -0.10003561659555839
     })
   })
 

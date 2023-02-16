@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.quadkeyToCentroidPoint = exports.quadkeyToPoint = exports.quadkeyToTile = void 0;
+exports.quadkeyToPoint = exports.quadkeyToTile = void 0;
 const tile_1 = require("./tile");
 /**
  * Converts a quadkey into tile XY coordinates.
@@ -39,6 +39,8 @@ exports.quadkeyToTile = quadkeyToTile;
 /**
  * Converts a quadkey into a geospatial coordinate.
  * @param quadkey Quadkey of the tile.
+ * @param anchorX - anchor point of longitude
+ * @param anchorY - anchor point of latitude
  * @returns A point value(west, south).
  */
 const quadkeyToPoint = (quadkey, anchorX = 0.0, anchorY = 0.0) => {
@@ -49,16 +51,3 @@ const quadkeyToPoint = (quadkey, anchorX = 0.0, anchorY = 0.0) => {
     return { lng: bbox.west + w * anchorX, lat: bbox.south + h * anchorY };
 };
 exports.quadkeyToPoint = quadkeyToPoint;
-/**
- * Converts a quadkey into a geospatial coordinate.
- * @param quadkey Quadkey of the tile.
- * @returns A point value.
- */
-const quadkeyToCentroidPoint = (quadkey) => {
-    const tile = (0, exports.quadkeyToTile)(quadkey);
-    const bbox = (0, tile_1.tileToBoundingBox)(tile.tileX, tile.tileY, quadkey.length);
-    const x = (bbox.west + bbox.east) * 0.5;
-    const y = (bbox.south + bbox.north) * 0.5;
-    return { lng: x, lat: y };
-};
-exports.quadkeyToCentroidPoint = quadkeyToCentroidPoint;
