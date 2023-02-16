@@ -10,7 +10,7 @@ export declare const quadkeyToTile: (quadkey: string) => Tile;
  * @param quadkey Quadkey of the tile.
  * @returns A point value(west, south).
  */
-export declare const quadkeyToPoint: (quadkey: string) => Point;
+export declare const quadkeyToPoint: (quadkey: string, anchorX?: number, anchorY?: number) => Point;
 /**
  * Converts a quadkey into a geospatial coordinate.
  * @param quadkey Quadkey of the tile.
