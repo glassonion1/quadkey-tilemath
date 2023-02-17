@@ -1,6 +1,6 @@
 {
   "name": "quadkey-tilemath",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Tile System math for the Spherical Mercator projection coordinate system (EPSG:3857)",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",
