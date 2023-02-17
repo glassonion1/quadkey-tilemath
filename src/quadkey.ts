@@ -1,4 +1,4 @@
-import { Point, Tile } from './model'
+import { Bbox, Point, Tile } from './model'
 import { tileToBoundingBox } from './tile'
 
 /**
@@ -42,6 +42,16 @@ export const quadkeyToTile = (quadkey: string): Tile => {
 }
 
 /**
+ * Calculates the bounding box of a quadkey.
+ * @param quadkey Quadkey of the tile.
+ * @returns A bounding box of the tile.
+ */
+export const quadkeyToBoundingBox = (quadkey: string): Bbox => {
+  const tile = quadkeyToTile(quadkey)
+  return tileToBoundingBox(tile.tileX, tile.tileY, quadkey.length)
+}
+
+/**
  * Converts a quadkey into a geospatial coordinate.
  * @param quadkey Quadkey of the tile.
  * @param anchorX - anchor point of longitude
@@ -53,8 +63,7 @@ export const quadkeyToPoint = (
   anchorX: number = 0.0,
   anchorY: number = 0.0
 ): Point => {
-  const tile = quadkeyToTile(quadkey)
-  const bbox = tileToBoundingBox(tile.tileX, tile.tileY, quadkey.length)
+  const bbox = quadkeyToBoundingBox(quadkey)
 
   const w = bbox.east - bbox.west
   const h = bbox.north - bbox.south

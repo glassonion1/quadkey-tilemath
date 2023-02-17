@@ -71,7 +71,7 @@ export const pointToQuadkey = (
  * @param lng - longitude in position coordinate.
  * @param lat - latitude in position coordinate.
  * @param zoom Zoom level.
- * @returns A bounding box of the tile defined as an array of numbers in the format of [west, south, east, north].
+ * @returns A bounding box of the tile.
  */
 export const pointToBoundingBox = (
   lng: number,

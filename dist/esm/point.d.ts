@@ -20,7 +20,7 @@ export declare const pointToQuadkey: (lng: number, lat: number, zoom: number) =>
  * @param lng - longitude in position coordinate.
  * @param lat - latitude in position coordinate.
  * @param zoom Zoom level.
- * @returns A bounding box of the tile defined as an array of numbers in the format of [west, south, east, north].
+ * @returns A bounding box of the tile.
  */
 export declare const pointToBoundingBox: (lng: number, lat: number, zoom: number) => Bbox;
 //# sourceMappingURL=point.d.ts.map

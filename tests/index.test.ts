@@ -1,5 +1,10 @@
 import { pointToBoundingBox, pointToQuadkey, pointToTile } from '../src/point'
-import { quadkeyToPoint, quadkeyToTile } from '../src/quadkey'
+import {
+  quadkeyToPoint,
+  quadkeyToTile,
+  quadkeyToBoundingBox
+} from '../src/quadkey'
+import { tileToBoundingBox } from '../src/tile'
 
 // https://jenningsanderson.com/geo/#8.9/35.6238/-220.2713
 describe('run tests', () => {
@@ -120,4 +125,78 @@ describe('run tests', () => {
       quadkeyToTile('1339')
     }).toThrowError(Error)
   })
+
+  it(`tests boundary value`, () => {
+    const qk = '13300211230321211111111'
+    const level = qk.length
+    const point = quadkeyToPoint(qk)
+    expect(point).toStrictEqual({
+      lng: 139.69111919403076,
+      lat: 35.630477101802654
+    })
+
+    const tile = quadkeyToTile(qk)
+    const bbox = tileToBoundingBox(tile.tileX, tile.tileY, level)
+    expect(bbox.west == point.lng).toBeTruthy()
+    expect(bbox.south == point.lat).toBeTruthy()
+    expect(bbox).toStrictEqual({
+      west: 139.69111919403076,
+      south: 35.630477101802654,
+      east: 139.691162109375,
+      north: 35.630511983000595
+    })
+
+    expect(bbox.west < bbox.east).toBeTruthy()
+    expect(bbox.south < bbox.north).toBeTruthy()
+
+    const epsilon = 0.00000000001
+
+    const qk1 = pointToQuadkey(point.lng + epsilon, point.lat + epsilon, level)
+    const qk2 = pointToQuadkey(bbox.east - epsilon, bbox.north - epsilon, level)
+    expect(qk === qk1).toBeTruthy()
+    expect(qk1 === qk2).toBeTruthy()
+  })
+})
+
+describe('run tests for random point', () => {
+  const random = (min: number, max: number): number => {
+    return Math.random() * (max - min) + min
+  }
+  for (let i = 0; i < 100; i++) {
+    const lng = random(-180, 180)
+    const lat = random(-85, 85)
+
+    it(`tests key parentage lng:${lng}, lat:${lat}`, () => {
+      // Check if the content of the higher key is included
+      let key = ''
+      const range = [...Array(23)].keys()
+      for (var v of range) {
+        const qk = pointToQuadkey(lng, lat, v)
+        expect(qk.startsWith(key)).toBeTruthy()
+        key = qk
+      }
+    })
+
+    it(`tests boundary value lng:${lng}, lat:${lat}`, () => {
+      // The same quadkey is generated even if it is even slightly inside the bounding box.
+      const level = 23
+      const qk = pointToQuadkey(lng, lat, level)
+      const bbox = quadkeyToBoundingBox(qk)
+
+      const epsilon = 0.00000000001
+
+      const qk1 = pointToQuadkey(
+        bbox.west + epsilon,
+        bbox.south + epsilon,
+        level
+      )
+      const qk2 = pointToQuadkey(
+        bbox.east - epsilon,
+        bbox.north - epsilon,
+        level
+      )
+      expect(qk === qk1).toBeTruthy()
+      expect(qk1 === qk2).toBeTruthy()
+    })
+  }
 })

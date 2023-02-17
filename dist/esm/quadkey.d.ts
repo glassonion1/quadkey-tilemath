@@ -1,10 +1,16 @@
-import { Point, Tile } from './model';
+import { Bbox, Point, Tile } from './model';
 /**
  * Converts a quadkey into tile XY coordinates.
  * @param quadkey Quadkey of the tile.
  * @returns Tile XY cocorindates for the specified quadkey.
  */
 export declare const quadkeyToTile: (quadkey: string) => Tile;
+/**
+ * Calculates the bounding box of a quadkey.
+ * @param quadkey Quadkey of the tile.
+ * @returns A bounding box of the tile.
+ */
+export declare const quadkeyToBoundingBox: (quadkey: string) => Bbox;
 /**
  * Converts a quadkey into a geospatial coordinate.
  * @param quadkey Quadkey of the tile.

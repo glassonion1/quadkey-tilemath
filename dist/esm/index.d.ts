@@ -2,6 +2,7 @@ declare const tileMath: {
     readonly pointToQuadkey: (lng: number, lat: number, zoom: number) => string;
     readonly pointToBoundingBox: (lng: number, lat: number, zoom: number) => import("./model").Bbox;
     readonly quadkeyToPoint: (quadkey: string, anchorX?: number, anchorY?: number) => import("./model").Point;
+    readonly quadkeyToBoundingBox: (quadkey: string) => import("./model").Bbox;
     readonly getQuadkeysInBoundingBox: (west: number, south: number, east: number, north: number, zoom: number) => string[];
 };
 export default tileMath;
