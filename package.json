@@ -20,6 +20,11 @@
   },
   "keywords": [],
   "author": "glassonion1",
+  "homepage": "https://github.com/glassonion1/quadkey-tilemath",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:glassonion1/quadkey-tilemath.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "@jest/types": "^29.3.1",
