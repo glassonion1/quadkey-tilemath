@@ -27,6 +27,13 @@ const toTileNum = (val: number, zoom: number): number => {
   return Math.trunc(Math.floor((val + EPSILON) * z2))
 }
 
+export const truncatePoint = (lng: number, lat: number): number[] => {
+  const longitude = clip(lng, MIN_LONGITUDE, MAX_LONGITUDE)
+  const latitude = clip(lat, MIN_LATITUDE, MAX_LATITUDE)
+
+  return [longitude, latitude]
+}
+
 /**
  * Calculates the XY tile coordinates that a coordinate falls into for a specific zoom level.
  * @param lng - longitude in position coordinate.
@@ -35,8 +42,7 @@ const toTileNum = (val: number, zoom: number): number => {
  * @returns Tiel XY coordinates.
  */
 export const pointToTile = (lng: number, lat: number, zoom: number): Tile => {
-  const latitude = clip(lat, MIN_LATITUDE, MAX_LATITUDE)
-  const longitude = clip(lng, MIN_LONGITUDE, MAX_LONGITUDE)
+  const [longitude, latitude] = truncatePoint(lng, lat)
 
   const x = (longitude + 180) / 360
   const sinLatitude = Math.sin((latitude * Math.PI) / 180)

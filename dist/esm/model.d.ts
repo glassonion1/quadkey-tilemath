@@ -21,4 +21,13 @@ export interface Tile {
     tileX: number;
     tileY: number;
 }
+/**
+ * Web Mercator
+ */
+export interface WebMercator {
+    x: number;
+    y: number;
+}
+export declare const degreesToRadians: (degrees: number) => number;
+export declare const radiansToDegrees: (radians: number) => number;
 //# sourceMappingURL=model.d.ts.map

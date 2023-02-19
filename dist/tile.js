@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.tileToBoundingBox = exports.tileToQuadkey = exports.tileToPoint = void 0;
+const model_1 = require("./model");
 /**
  * Converts tile XY coordinates into a point at a specified level of detail.
  * @param tileX Tile X coordinate.
@@ -12,7 +13,7 @@ const tileToPoint = (tileX, tileY, zoom) => {
     const z2 = Math.pow(2, zoom);
     const lng = (tileX / z2) * 360.0 - 180.0;
     const latRadian = Math.atan(Math.sinh(Math.PI * (1 - (2 * tileY) / z2)));
-    const lat = latRadian * (180 / Math.PI);
+    const lat = (0, model_1.radiansToDegrees)(latRadian);
     return { lng: lng, lat: lat };
 };
 exports.tileToPoint = tileToPoint;

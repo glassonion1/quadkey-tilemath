@@ -1,6 +1,6 @@
 {
   "name": "quadkey-tilemath",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Tile System math for the Spherical Mercator projection coordinate system (EPSG:3857)",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",
@@ -18,7 +18,13 @@
     "build:esm": "tsc -p tsconfig.esm.json",
     "test": "jest"
   },
-  "keywords": [],
+  "keywords": [
+    "quadkey",
+    "longitude",
+    "latitude",
+    "geocode",
+    "mercator"
+  ],
   "author": "glassonion1",
   "homepage": "https://github.com/glassonion1/quadkey-tilemath",
   "repository": {

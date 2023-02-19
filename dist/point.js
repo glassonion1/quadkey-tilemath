@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pointToBoundingBox = exports.pointToQuadkey = exports.pointToTile = void 0;
+exports.pointToBoundingBox = exports.pointToQuadkey = exports.pointToTile = exports.truncatePoint = void 0;
 const tile_1 = require("./tile");
 const MIN_LATITUDE = -85.05112878;
 const MAX_LATITUDE = 85.05112878;
@@ -24,6 +24,12 @@ const toTileNum = (val, zoom) => {
     // are counted in the next tile over.
     return Math.trunc(Math.floor((val + EPSILON) * z2));
 };
+const truncatePoint = (lng, lat) => {
+    const longitude = clip(lng, MIN_LONGITUDE, MAX_LONGITUDE);
+    const latitude = clip(lat, MIN_LATITUDE, MAX_LATITUDE);
+    return [longitude, latitude];
+};
+exports.truncatePoint = truncatePoint;
 /**
  * Calculates the XY tile coordinates that a coordinate falls into for a specific zoom level.
  * @param lng - longitude in position coordinate.
@@ -32,8 +38,7 @@ const toTileNum = (val, zoom) => {
  * @returns Tiel XY coordinates.
  */
 const pointToTile = (lng, lat, zoom) => {
-    const latitude = clip(lat, MIN_LATITUDE, MAX_LATITUDE);
-    const longitude = clip(lng, MIN_LONGITUDE, MAX_LONGITUDE);
+    const [longitude, latitude] = (0, exports.truncatePoint)(lng, lat);
     const x = (longitude + 180) / 360;
     const sinLatitude = Math.sin((latitude * Math.PI) / 180);
     const y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI);

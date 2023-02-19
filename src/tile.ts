@@ -1,4 +1,4 @@
-import { Bbox, Point } from './model'
+import { Bbox, Point, radiansToDegrees } from './model'
 
 /**
  * Converts tile XY coordinates into a point at a specified level of detail.
@@ -15,7 +15,7 @@ export const tileToPoint = (
   const z2 = Math.pow(2, zoom)
   const lng = (tileX / z2) * 360.0 - 180.0
   const latRadian = Math.atan(Math.sinh(Math.PI * (1 - (2 * tileY) / z2)))
-  const lat = latRadian * (180 / Math.PI)
+  const lat = radiansToDegrees(latRadian)
 
   return { lng: lng, lat: lat }
 }
