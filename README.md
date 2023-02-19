@@ -8,6 +8,9 @@ The quadkey-tilemath implements the TileSystem static class described here as a 
 
 Given a (longitude, latitude) and level produce a quadkey to be used in Bing Maps. Can also supply methods to generate a Google Maps TileXYZ
 
+## Class diagram
+![plantuml](https://user-images.githubusercontent.com/1037944/219954819-e1670562-1027-4b34-8c62-1e7cd64d4796.svg)
+
 ## Install
 ```
 $ npm install quadkey-tilemath
