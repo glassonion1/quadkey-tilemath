@@ -1,4 +1,4 @@
-import { Bbox, Point, radiansToDegrees } from './model'
+import { Bbox, Point, radiansToDegrees } from './types'
 
 /**
  * Converts tile XY coordinates into a point at a specified level of detail.

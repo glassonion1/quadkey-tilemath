@@ -1,4 +1,4 @@
-import { Bbox, Point } from './model';
+import { Bbox, Point } from './types';
 /**
  * Converts tile XY coordinates into a point at a specified level of detail.
  * @param tileX Tile X coordinate.

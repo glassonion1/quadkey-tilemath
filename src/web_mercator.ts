@@ -1,4 +1,4 @@
-import { degreesToRadians, Point, radiansToDegrees, WebMercator } from './model'
+import { degreesToRadians, Point, radiansToDegrees, WebMercator } from './types'
 import { truncatePoint } from './point'
 
 const EARTH_RADIUS = 6378137

@@ -24,7 +24,7 @@ $ yarn add quadkey-tilemath
 ## Usage
 Converts a longitude, latitude to a quadkey.
 ```ts
-import tileMath from 'quadkey-tilemath'
+import { tileMath } from 'quadkey-tilemath'
 
 // Shibuya
 const quadkey = tileMath.pointToQuadkey([139.69116, 35.63051], 20)
@@ -34,7 +34,7 @@ console.log(quadkey)
 ```
 Converts a quadkey to lng lat point.
 ```ts
-import tileMath from 'quadkey-tilemath'
+import { tileMath } from 'quadkey-tilemath'
 
 const point = tileMath.quadkeyToPoint('13300211230301333312')
 
@@ -44,4 +44,4 @@ console.log(point)
 
 ## Demo using map
 Here is a demo that actually draws the quadkey on the map using this library.  
-https://tools.9revolution9.com/geo/geocode/
+https://9revolution9.com/tools/geo/geocode/

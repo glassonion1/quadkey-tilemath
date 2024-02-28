@@ -1,4 +1,4 @@
-import { Bbox, Point, Tile } from './model'
+import { Bbox, Point, Tile } from './types'
 import { tileToBoundingBox } from './tile'
 
 /**

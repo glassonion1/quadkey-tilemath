@@ -1,4 +1,4 @@
-import tileMath from '../src'
+import { tileMath } from '../src'
 
 describe('run tests', () => {
   it('tests the pointToWebMercator', () => {

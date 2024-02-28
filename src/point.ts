@@ -1,4 +1,4 @@
-import { Bbox, Tile } from './model'
+import { Bbox, Tile } from './types'
 import { tileToBoundingBox, tileToQuadkey } from './tile'
 
 const MIN_LATITUDE = -85.05112878

@@ -170,7 +170,7 @@ describe('run tests for random point', () => {
       // Check if the content of the higher key is included
       let key = ''
       const range = [...Array(23)].keys()
-      for (var v of range) {
+      for (const v of range) {
         const qk = pointToQuadkey(lng, lat, v)
         expect(qk.startsWith(key)).toBeTruthy()
         key = qk

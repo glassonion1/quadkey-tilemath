@@ -1,4 +1,4 @@
-import { Bbox, Tile } from './model';
+import { Bbox, Tile } from './types';
 export declare const truncatePoint: (lng: number, lat: number) => number[];
 /**
  * Calculates the XY tile coordinates that a coordinate falls into for a specific zoom level.

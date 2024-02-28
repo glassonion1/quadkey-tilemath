@@ -1,4 +1,4 @@
-import { Bbox, Point, Tile } from './model';
+import { Bbox, Point, Tile } from './types';
 /**
  * Converts a quadkey into tile XY coordinates.
  * @param quadkey Quadkey of the tile.

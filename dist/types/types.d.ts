@@ -30,4 +30,4 @@ export interface WebMercator {
 }
 export declare const degreesToRadians: (degrees: number) => number;
 export declare const radiansToDegrees: (radians: number) => number;
-//# sourceMappingURL=model.d.ts.map
+//# sourceMappingURL=types.d.ts.map

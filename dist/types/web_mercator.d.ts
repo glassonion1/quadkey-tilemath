@@ -1,4 +1,4 @@
-import { Point, WebMercator } from './model';
+import { Point, WebMercator } from './types';
 /**
  * Convert longitude and latitude to web mercator x, y.
  * @param lng - longitude in position coordinate.
