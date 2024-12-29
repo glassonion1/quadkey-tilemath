@@ -1,4 +1,4 @@
-import { Bbox, Tile } from './types'
+import type { Bbox, Tile } from './types'
 import { tileToBoundingBox, tileToQuadkey } from './tile'
 
 const MIN_LATITUDE = -85.05112878
@@ -12,7 +12,7 @@ const clip = (n: number, minValue: number, maxValue: number): number => {
 
 const toTileNum = (val: number, zoom: number): number => {
   const EPSILON = 1e-14
-  const z2 = Math.pow(2, zoom)
+  const z2 = 2 ** zoom
 
   if (val <= 0) {
     return 0

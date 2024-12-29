@@ -1,4 +1,4 @@
-import { Bbox, Point, Tile } from './types'
+import type { Bbox, Point, Tile } from './types'
 import { tileToBoundingBox } from './tile'
 
 /**
@@ -60,8 +60,8 @@ export const quadkeyToBoundingBox = (quadkey: string): Bbox => {
  */
 export const quadkeyToPoint = (
   quadkey: string,
-  anchorX: number = 0.0,
-  anchorY: number = 0.0
+  anchorX = 0.0,
+  anchorY = 0.0
 ): Point => {
   const bbox = quadkeyToBoundingBox(quadkey)
 

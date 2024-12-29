@@ -1,4 +1,4 @@
-import { Bbox, Point, radiansToDegrees } from './types'
+import { type Bbox, type Point, radiansToDegrees } from './types'
 
 /**
  * Converts tile XY coordinates into a point at a specified level of detail.
@@ -12,7 +12,7 @@ export const tileToPoint = (
   tileY: number,
   zoom: number
 ): Point => {
-  const z2 = Math.pow(2, zoom)
+  const z2 = 2 ** zoom
   const lng = (tileX / z2) * 360.0 - 180.0
   const latRadian = Math.atan(Math.sinh(Math.PI * (1 - (2 * tileY) / z2)))
   const lat = radiansToDegrees(latRadian)
@@ -37,11 +37,11 @@ export const tileToQuadkey = (
     let digit = 0
     const mask = 1 << (i - 1)
 
-    if ((tileX & mask) != 0) {
+    if ((tileX & mask) !== 0) {
       digit++
     }
 
-    if ((tileY & mask) != 0) {
+    if ((tileY & mask) !== 0) {
       digit += 2
     }
 
